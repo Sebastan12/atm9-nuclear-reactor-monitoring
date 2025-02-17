@@ -1,8 +1,15 @@
 from typing import Union
-
+from prometheus_client import Counter, Gauge, make_asgi_app
 from fastapi import FastAPI
 
 app = FastAPI()
+metric_app = make_asgi_app()
+app.mount("/metrics", metric_app)
+
+URANIUM_INGOT_GAUGE = Gauge(
+    "ae2_uranium_ingot_quantity",
+    "Current quantity of uranium ingots in the AE2 storage system"
+)
 
 @app.get("/")
 def read_root():
@@ -13,7 +20,7 @@ def read_root():
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
-#coukd get entire item object later and just forward it to prometheus?
-@app.post("/items/")
-def create_item(item_name: str, item_stock: int):
-    return {"item_name": item_name, "item_stock": item_stock}
+@app.post("/uranium-ingot-stock/")
+def create_item(item_stock: int):
+    URANIUM_INGOT_GAUGE.set(item_stock)
+    return {"item_stock": item_stock}
