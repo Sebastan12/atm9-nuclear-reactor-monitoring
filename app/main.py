@@ -7,8 +7,8 @@ metric_app = make_asgi_app()
 app.mount("/metrics", metric_app)
 
 URANIUM_INGOT_GAUGE = Gauge(
-    "ae2_uranium_ingot_quantity",
-    "Current quantity of uranium ingots in the AE2 storage system"
+    "ae2_uranium_ingot_count",
+    "Current number of uranium ingots in the AE2 storage system"
 )
 
 @app.get("/")
